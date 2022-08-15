@@ -1,6 +1,9 @@
 {
   "dependencies": {
-    "axios": "^0.27.2"
+    "axios": "^0.27.2",
+    "open-location-code": "^1.0.3"
   },
-  "scripts": {"write": "node writer.js"}
+  "scripts": {
+    "write": "node writer.js"
+  }
 }

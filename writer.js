@@ -1,9 +1,14 @@
 const axios = require('axios');
 const fs = require('fs/promises');
+const OpenLocationCode = require('open-location-code').OpenLocationCode;
+const openLocationCode = new OpenLocationCode();
 
 const completePacketURL =
   'https://www.smalltowntransit.com/api/use-complete-packet';
 const ROUTE_TYPE = 3; // ENUM https://developers.google.com/transit/gtfs/reference#routestxt meaning 'bus'
+const LARAMIE_LAT = 41.3;
+const LARAMIE_LON = -105.6;
+const FEED_URI = '../my_feed/';
 
 const handleError = (err) => {
   console.error('Caught in promise: ', err);
@@ -18,46 +23,86 @@ const fetchInUseCompletePacket = async () => {
   }
 };
 
+const rowListToCSVList = (rowList) =>
+  rowList.map((row) => {
+    const CSVRow = row.join(',');
+    return CSVRow;
+  });
+
+const CSVListToCSVTable = (CSVList) => {
+  const CSVTable = CSVList.join('\n');
+  return CSVTable;
+};
+
+const addTitleToCSVTable = (columnTitlesCSV, CSVTable) => {
+  const completeCSVTable = columnTitlesCSV + '\n' + CSVTable;
+  return completeCSVTable;
+};
+
+const createCSVTable = (rowList, columnTitlesCSV) => {
+  const CSVList = rowListToCSVList(rowList);
+  const CSVNoTitles = CSVListToCSVTable(CSVList);
+  const CSV = addTitleToCSVTable(columnTitlesCSV, CSVNoTitles);
+  return CSV;
+};
+
 // A GTFS 'Route' is a SmallTown Transit 'Service'
 const formatServicesToGTFSRouteCSV = async (services) => {
-  try {
-    const routeColumnTitles = ['route_id', 'route_long_name', 'route_type'];
-    const routeColumnTitlesCSV = routeColumnTitles.join(',');
+  const routeColumnTitles = ['route_id', 'route_long_name', 'route_type'];
+  const routeColumnTitlesCSV = routeColumnTitles.join(',');
 
-    const routeRowList = services.map((service) => {
-      const { title: serviceTitle, id: serviceId } = service;
-      const routeId = serviceId;
-      const routeLongName = serviceTitle;
-      const routeType = ROUTE_TYPE;
-      return [routeId, routeLongName, routeType];
-    });
+  const routeRowList = services.map((service) => {
+    const { title: serviceTitle, id: serviceId } = service;
+    const routeId = serviceId;
+    const routeLongName = serviceTitle;
+    const routeType = ROUTE_TYPE;
+    return [routeId, routeLongName, routeType];
+  });
 
-    const routeCSVList = routeRowList.map((row) => {
-      const CSVRow = row.join(',');
-      return CSVRow;
-    });
+  const routeCSV = createCSVTable(routeRowList, routeColumnTitlesCSV);
+  return routeCSV;
+};
 
-    const routeCSVNoTitles = routeCSVList.join('\n');
+const getCenterCoordinatesFromShortPlusCode = (shortPlusCode) => {
+  shortPlusCode = shortPlusCode.trim();
 
-    const routeCSV = routeColumnTitlesCSV + '\n' + routeCSVNoTitles;
-
-    return routeCSV;
-  } catch (err) {
-    handleError(err);
-  }
+  const nearestFullCode = openLocationCode.recoverNearest(
+    shortPlusCode,
+    LARAMIE_LAT,
+    LARAMIE_LON
+  );
+  const coordinates = openLocationCode.decode(nearestFullCode);
+  const { latitudeCenter, longitudeCenter } = coordinates;
+  return { latitudeCenter, longitudeCenter };
 };
 
 const formatDestinationsToGTFSStopsCSV = async (destinations) => {
   const stopColumnTitles = ['stop_id', 'stop_name', 'stop_lat', 'stop_lon'];
+  const stopColumnTitlesCSV = stopColumnTitles.join(',');
+
+  const stopRowList = destinations.map((destination) => {
+    const { text: destinationName, _id, plusCode } = destination;
+    const stopName = destinationName;
+    const stop_id = _id;
+    const { latitudeCenter: stopLat, longitudeCenter: stopLon } =
+      getCenterCoordinatesFromShortPlusCode(plusCode);
+    return [stop_id, stopName, stopLat, stopLon];
+  });
+
+  const stopCSV = createCSVTable(stopRowList, stopColumnTitlesCSV);
+  return stopCSV;
 };
 
 const write = async () => {
   const completePacket = await fetchInUseCompletePacket();
-  const { services } = completePacket;
-  const routeCSV = await formatServicesToGTFSRouteCSV(services);
+  const { services, destinations } = completePacket;
 
-  await fs.writeFile('../my_feed/routes.txt', routeCSV);
-  console.log("Successfully wrote to 'routes.txt'");
+  const routeCSV = await formatServicesToGTFSRouteCSV(services);
+  const stopCSV = await formatDestinationsToGTFSStopsCSV(destinations);
+
+  await fs.writeFile(FEED_URI + 'routes.txt', routeCSV);
+  await fs.writeFile(FEED_URI + 'stops.txt', stopCSV);
+  console.log('Success.');
 };
 
 write();
