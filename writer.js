@@ -9,6 +9,7 @@ const ROUTE_TYPE = 3; // ENUM https://developers.google.com/transit/gtfs/referen
 const LARAMIE_LAT = 41.3;
 const LARAMIE_LON = -105.6;
 const FEED_URI = '../my_feed/';
+const COORDINATE_ONE_METER_ACCURACY_DECIMAL_PLACE = 6;
 
 const handleError = (err) => {
   console.error('Caught in promise: ', err);
@@ -73,7 +74,13 @@ const getCenterCoordinatesFromShortPlusCode = (shortPlusCode) => {
   );
   const coordinates = openLocationCode.decode(nearestFullCode);
   const { latitudeCenter, longitudeCenter } = coordinates;
-  return { latitudeCenter, longitudeCenter };
+  const toFixedSixDigits = (number) =>
+    number.toFixed(COORDINATE_ONE_METER_ACCURACY_DECIMAL_PLACE);
+
+  return {
+    latitudeCenter: toFixedSixDigits(latitudeCenter),
+    longitudeCenter: toFixedSixDigits(longitudeCenter),
+  };
 };
 
 const formatDestinationsToGTFSStopsCSV = async (destinations) => {
