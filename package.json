@@ -1,9 +1,12 @@
 {
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.16",
     "axios": "^0.27.2",
+    "node-geometry-library": "^1.2.6",
     "open-location-code": "^1.0.3"
   },
   "scripts": {
-    "write": "node writer.js"
+    "write": "node writer.js",
+    "maps": "node mapsAPI.js"
   }
 }

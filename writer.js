@@ -28,6 +28,7 @@ const STOP_TYPE_BYREQUEST = 3;
 const STOP_TYPE_DROPOFFONLY = 4;
 const GTFS_NO_PICKUP_AVAILABLE = 1;
 const GTFS_REGULARLY_SCHEDULED_PICKUP = 0;
+const NULL_ROW = [];
 
 const handleError = (err) => {
   console.error('Caught in promise: ', err);
@@ -199,7 +200,7 @@ const formatStopsToGTFSStopTimesCSV = (stops, signBeforeArrivals) => {
   ];
   const stopTimesColumnTitlesCSV = listToCSV(stopTimesColumnTitles);
 
-  const stopTimesRowList = stops.map((stop, i) => {
+  let stopTimesRowList = stops.map((stop, i) => {
     const {
       serviceId,
       routeId,
@@ -207,9 +208,15 @@ const formatStopsToGTFSStopTimesCSV = (stops, signBeforeArrivals) => {
       leaveTimeStringhhmm,
       stopTypeId,
       signBeforeArrivalId,
+      stopIsPublic,
       destinationId: stop_id,
       stopId: stopSequence, // Used for GTFS stop_sequence. Must increase over a trip, so this value will be sufficient.
     } = stop;
+
+    if (stopIsPublic === false) {
+      return NULL_ROW;
+    }
+
     const addSecondsTohhmmTimeFormat = (hhmm) => {
       return hhmm + ':00';
     };
@@ -241,6 +248,12 @@ const formatStopsToGTFSStopTimesCSV = (stops, signBeforeArrivals) => {
       pickupType,
     ];
   });
+
+  const filterNullRow = (rowList) => {
+    return rowList.filter((row) => row !== NULL_ROW);
+  };
+
+  stopTimesRowList = filterNullRow(stopTimesRowList);
 
   const stopTimesCSV = createCSVTable(
     stopTimesRowList,

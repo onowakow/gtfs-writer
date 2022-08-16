@@ -1,0 +1,68 @@
+{
+  "bounds": {
+    "northeast": { "lat": 41.3138536, "lng": -105.5705707 },
+    "southwest": { "lat": 41.3121355, "lng": -105.5784268 }
+  },
+  "copyrights": "Map data ©2022",
+  "legs": [
+    {
+      "distance": { "text": "0.5 mi", "value": 814 },
+      "duration": { "text": "2 mins", "value": 136 },
+      "end_address": "8C7H+FV4 Laramie, WY, USA",
+      "end_location": { "lat": 41.3138536, "lng": -105.5705707 },
+      "start_address": "8C6C+VH5 Laramie, WY, USA",
+      "start_location": { "lat": 41.3121355, "lng": -105.5784268 },
+      "steps": [
+        {
+          "distance": { "text": "220 ft", "value": 67 },
+          "duration": { "text": "1 min", "value": 21 },
+          "end_location": { "lat": 41.3127406, "lng": -105.5783903 },
+          "html_instructions": "Head <b>north</b> toward <b>N 15th St</b>",
+          "polyline": { "points": "{wc{FdxkcSGAy@AWC]?" },
+          "start_location": { "lat": 41.3121355, "lng": -105.5784268 },
+          "travel_mode": "DRIVING"
+        },
+        {
+          "distance": { "text": "335 ft", "value": 102 },
+          "duration": { "text": "1 min", "value": 31 },
+          "end_location": { "lat": 41.312664, "lng": -105.5771732 },
+          "html_instructions": "Turn <b>right</b> toward <b>N 15th St</b>",
+          "maneuver": "turn-right",
+          "polyline": { "points": "s{c{F|wkcS?q@@i@@m@Bk@F}@" },
+          "start_location": { "lat": 41.3127406, "lng": -105.5783903 },
+          "travel_mode": "DRIVING"
+        },
+        {
+          "distance": { "text": "233 ft", "value": 71 },
+          "duration": { "text": "1 min", "value": 17 },
+          "end_location": { "lat": 41.3132981, "lng": -105.57717 },
+          "html_instructions": "Turn <b>left</b> onto <b>N 15th St</b>",
+          "maneuver": "turn-left",
+          "polyline": { "points": "c{c{FhpkcS_C?" },
+          "start_location": { "lat": 41.312664, "lng": -105.5771732 },
+          "travel_mode": "DRIVING"
+        },
+        {
+          "distance": { "text": "0.4 mi", "value": 574 },
+          "duration": { "text": "1 min", "value": 67 },
+          "end_location": { "lat": 41.3138536, "lng": -105.5705707 },
+          "html_instructions": "Turn <b>right</b> at the 1st cross street onto <b>E Willett Dr</b><div style=\"font-size:0.9em\">Destination will be on the right</div>",
+          "maneuver": "turn-right",
+          "polyline": {
+            "points": "c_d{FhpkcS`@_TBwAIs@i@yDEi@Ca@CuAAYCQGWGOU[MMWa@"
+          },
+          "start_location": { "lat": 41.3132981, "lng": -105.57717 },
+          "travel_mode": "DRIVING"
+        }
+      ],
+      "traffic_speed_entry": [],
+      "via_waypoint": []
+    }
+  ],
+  "overview_polyline": {
+    "points": "{wc{FdxkcSwBG@{ADyAF}@_C?d@wVs@mFIkAEoBKi@]k@e@o@"
+  },
+  "summary": "E Willett Dr",
+  "warnings": [],
+  "waypoint_order": []
+}
